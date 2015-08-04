@@ -19,8 +19,7 @@ PATH=/opt/GridDevel/bin:$PATH
 wget -O VOIDCardInfo.xml http://operations-portal.egi.eu/xml/voIDCard/public/all/true
 # Put the VOs you support in here, one per line:
 vi myvos.txt
-vomsSnooper.sh --xmlfile VOIDCardInfo.xml  --myvos myvos.txt --vodfile
-myvos.txt --voddir glitecfg/vo.d --outfile glitecfg/site-info.def
+vomsSnooper.sh --xmlfile VOIDCardInfo.xml  --myvos myvos.txt --vodfile myvos.txt --voddir glitecfg/vo.d --outfile glitecfg/site-info.def
 
 2) Check carefully the data file by hand. The rules are:
 - any name used in one VO should not be used in any other VO
