@@ -1,0 +1,37 @@
+VoConfig
+--------
+
+To use it:
+
+./voconfig.py -f vo_data.conf 
+
+Notes:
+
+Check carefully by hand. The rules are:
+- any name used in one VO should not be used in any other VO
+- BLOCKNAME and NAME must be unique (this is covered by the rule above, if you think about it)
+- NAME3 <= 3, NAME5 <= 5, NAME8 <= 8
+- Names (not blockname)_should_ never end in a digit (geant4 and na48 are broken, I think). See NA62.
+#
+I'll build this validation into the program soon. For now, just watch your step.
+
+VO Field order for the data file:
+blockname     - name in caps
+gid           - id of group
+pgid          - id of prd group
+sgid          - id of sgm group
+pilgid        - id of pil group (if any)
+name          - long name of vo
+name3         - max 3 letter name, short stub
+name5         - max 5 letter name, long stub
+name8         - max 8 letter name, used for group
+users         - number of users
+prd           - number of prd user
+sgm           - number of sgm users
+pil           - number of pilot users
+lcgadmin      - add role for /ROLE=lcgadmin
+production    - add role for /ROLE=production`
+pilot         - add role for /ROLE=pilot
+
+Steve, Feb 2013
+
