@@ -7,7 +7,10 @@ To use it:
 
 Notes:
 
-Check carefully by hand. The rules are:
+1) Suggest you use VomsSnooper to prepare the VOMS coordinates for your vo.d
+directory. That's in GitHub too.
+
+2) Check carefully the data file by hand. The rules are:
 - any name used in one VO should not be used in any other VO
 - BLOCKNAME and NAME must be unique (this is covered by the rule above, if you think about it)
 - NAME3 <= 3, NAME5 <= 5, NAME8 <= 8
@@ -15,7 +18,8 @@ Check carefully by hand. The rules are:
 #
 I'll build this validation into the program soon. For now, just watch your step.
 
-VO Field order for the data file:
+3) VO Field order for the data file:
+
 blockname     - name in caps
 gid           - id of group
 pgid          - id of prd group
