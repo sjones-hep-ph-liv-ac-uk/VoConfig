@@ -21,6 +21,7 @@ def usage():
   print ' -u  --users    <file>   users conf file    (def: users.conf.gen)'
   print ' -n  --condor   <file>   condor conf file    (def: condor.conf.gen)'
   print ' -g  --groups   <file>   groups conf        (def: groups.conf.gen)'
+  print ' -a  --arguswn  <file>   arguswn conf       (def: arguswn.conf.gen)'
   print ' -m  --mauifrag <file>   maui frag          (def: maui.cfg.gen)'
   print ' -q  --qmgrfrag <file>   qmgr frag          (def: qmgr.conf.gen)'
   print ''
@@ -36,13 +37,14 @@ def initOptions(o):
   o['users_conf_file']   = 'users.conf.gen'
   o['condor_conf_file']  = 'condor.conf.gen'
   o['groups_conf_file']  = 'groups.conf.gen'
+  o['arguswn_conf_file'] = 'arguswn.conf.gen'
   o['maui_frag_file']    = 'maui.cfg.gen'
   o['qmgr_frag_file']    =  'qmgr.conf.gen'
  
   # Read the options 
   try:
-    options, remainder = getopt.getopt(sys.argv[1:], 'c:s:u:n:g:m:q:', [
-      'conf=', 'sidfrag=', 'users=', 'condor=', 'groups=', 'mauifrag=','qmgrfrag='])
+    options, remainder = getopt.getopt(sys.argv[1:], 'c:s:u:n:g:a:m:q:', [
+      'conf=', 'sidfrag=', 'users=', 'condor=', 'groups=','arguswn=', 'mauifrag=','qmgrfrag='])
 
   except getopt.GetoptError:
     usage(); sys.exit(1)
@@ -62,6 +64,8 @@ def initOptions(o):
       o['condor_conf_file'] = arg
     elif opt in ('-g', '--groups'):
       o['groups_conf_file'] = arg
+    elif opt in ('-a', '--arguswn'):
+      o['arguswn_conf_file'] = arg
     elif opt in ('-m', '--mauifrag'):
       o['maui_frag_file'] = arg
     elif opt in ('-q', '--qmgrfrag'):
@@ -313,6 +317,40 @@ class GroupsConf:
 
         f.write('"/' + vo.name + '"::::\n')
         f.write('"/' + vo.name + '/*"::::\n')
+    f.close()
+
+#--- class
+class ArguswnConf:
+
+  """ Produces a section of argus policy for the WNs """
+  def __init__(self):
+    x = 1
+
+  # Write groups.conf
+  def write_arguswn(self,vo_list,file):
+
+    try:
+      f = open(file, 'w')
+    except IOError:
+      print('Cannot open arguswn.conf file '); sys.exit(1)
+
+    # Go over all the VOs
+    for vo in vo_list:
+
+      # Omit DUMMY...
+      match_obj = re.match('^DUMMY',vo.blockname) 
+      if match_obj is None:
+
+        # Write this VO
+
+        f.write('    rule permit {pfqan = "/' + vo.name + '\" }\n') 
+        f.write('    rule permit {pfqan = "/' + vo.name + '/Role=lcgadmin\" }\n') 
+        f.write('    rule permit {pfqan = "/' + vo.name + '/Role=production\" }\n') 
+
+        # Maybe write pilots
+        if re.match('yes',vo.pilot):
+          f.write('    rule permit {pfqan = "/' + vo.name + '/Role=pilot\" }\n') 
+
     f.close()
 
 #--- class
@@ -736,6 +774,11 @@ condor_conf.write_condor(vo_list,options['condor_conf_file'])
 
 groups_conf = GroupsConf()
 groups_conf.write_groups(vo_list,options['groups_conf_file'])
+
+# Set up an Argus policy file for WNs
+
+arguswn_conf = ArguswnConf()
+arguswn_conf.write_arguswn(vo_list,options['arguswn_conf_file'])
 
 # Set up a MauiFrag, and write the fragment of maui.cfg
 
